@@ -1,0 +1,14 @@
+tasks:
+  - before: >
+      mkdir -p /workspace/.cache/bazel &&
+      ln -s /workspace/.cache/bazel ~/.cache/bazel &&
+      mkdir /workspace/.cache/bazelisk &&
+      ln -s /workspace/.cache/bazelisk ~/.cache/bazelisk
+    init: >
+      pip install -U --user pip numpy wheel &&
+      pip install -U --user keras_preprocessing --no-deps &&
+      go get github.com/bazelbuild/bazelisk &&
+      ln -s /workspace/go/bin/bazelisk /workspace/go/bin/bazel &&
+      yes '' | ./configure &&
+      bazel build --jobs=3 //tensorflow/tools/pip_package:build_pip_package &&
+      ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
